@@ -416,9 +416,19 @@ googleLoginButton.addEventListener(
     "click",
     function() {
 
+        const isGitHubPages =
+            window.location.hostname.endsWith("github.io");
+
+        if (isGitHubPages) {
+
+            loginScreen.classList.add("hidden");
+            mainMenuScreen.classList.remove("hidden");
+
+            return;
+        }
+
         window.location.href =
             "http://localhost:3000/auth/google";
-
     }
 );
 
