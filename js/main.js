@@ -363,6 +363,17 @@ startButton.addEventListener(
     "click",
     async function() {
 
+        const isGitHubPages =
+            window.location.hostname.endsWith("github.io");
+
+        if (isGitHubPages) {
+
+            startScreen.classList.add("hidden");
+            mainMenuScreen.classList.remove("hidden");
+
+            return;
+        }
+
         try {
 
             const response =
@@ -376,21 +387,15 @@ startButton.addEventListener(
             const data =
                 await response.json();
 
-            startScreen.classList.add(
-                "hidden"
-            );
+            startScreen.classList.add("hidden");
 
             if (data.authenticated) {
 
-                mainMenuScreen.classList.remove(
-                    "hidden"
-                );
+                mainMenuScreen.classList.remove("hidden");
 
             } else {
 
-                loginScreen.classList.remove(
-                    "hidden"
-                );
+                loginScreen.classList.remove("hidden");
 
             }
 
@@ -401,16 +406,9 @@ startButton.addEventListener(
                 error
             );
 
-            startScreen.classList.add(
-                "hidden"
-            );
-
-            loginScreen.classList.remove(
-                "hidden"
-            );
-
+            startScreen.classList.add("hidden");
+            loginScreen.classList.remove("hidden");
         }
-
     }
 );
 
