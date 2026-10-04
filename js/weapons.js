@@ -3,6 +3,10 @@ import {
 } from "./player.js";
 
 import {
+    playSound
+} from "./audio.js";
+
+import {
     enemies
 } from "./enemies.js";
 
@@ -98,6 +102,8 @@ export function playerAttack(dt) {
     if (!nearestEnemy) {
         return;
     }
+
+    playSound("magicBolt");
 
     const baseAngle =
         Math.atan2(

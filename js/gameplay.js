@@ -4,7 +4,9 @@
 
 import { player } from "./player.js";
 import { enemies } from "./enemies.js";
+import { playSound } from "./audio.js";
 
+let levelUpPending = false;
 
 // ============================================================
 // XP GEMS
@@ -33,6 +35,8 @@ export function resetGameplay() {
     damageCooldown = 0;
 
     playerHitTimer = 0;
+
+    levelUpPending = false;
 
 }
 
@@ -77,6 +81,7 @@ export function checkEnemyCollisions(
                 player.hp -=
                     enemy.damage;
 
+                    playSound("playerHit");
 
                 player.hp =
                     Math.max(
@@ -245,36 +250,23 @@ function collectXP(value) {
 // LEVEL UP
 // ============================================================
 
-export function checkLevelUp(
-    onLevelUp
-) {
+export function checkLevelUp(onLevelUp) {
+    if (player.xp >= player.xpNeeded && !levelUpPending) {
+        levelUpPending = true;
 
-    if (
-        player.xp >=
-        player.xpNeeded
-    ) {
-
-        player.xp -=
-            player.xpNeeded;
-
-
+        player.xp -= player.xpNeeded;
         player.level++;
-
-
-        player.xpNeeded =
-            Math.floor(
-                player.xpNeeded *
-                1.35
-            );
-
+        player.xpNeeded = Math.floor(player.xpNeeded * 1.35);
 
         if (onLevelUp) {
-
             onLevelUp();
-
         }
-
     }
+}
+
+export function resetLevelUpState() {
+
+    levelUpPending = false;
 
 }
 
@@ -288,6 +280,8 @@ export function isPlayerHit() {
     return playerHitTimer > 0;
 
 }
+
+
 
 
 // ============================================================

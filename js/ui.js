@@ -170,7 +170,7 @@ const specialUpgrades = [
     {
         id: "forkingBolt",
 
-        name: "Forking Bolt",
+        name: "Piercing Bolt",
 
         apply: function() {
 
@@ -661,4 +661,65 @@ export function updateHighScoreDisplay(
     ).textContent =
         highScores.overall;
 
+}
+
+// ============================================================
+// DATABASE HIGH SCORE DISPLAY
+// ============================================================
+
+export function updateDatabaseScoreDisplay(databaseScores) {
+
+    const levelScores = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0
+    };
+
+    let infiniteScore = 0;
+    let overallScore = 0;
+
+    databaseScores.forEach(function(scoreEntry) {
+
+        const score = Number(scoreEntry.score) || 0;
+        const level = Number(scoreEntry.level) || 0;
+
+        if (level >= 1 && level <= 5) {
+            levelScores[level] = Math.max(
+                levelScores[level],
+                score
+            );
+        }
+
+        if (level === 0 || level === 6) {
+            infiniteScore = Math.max(
+                infiniteScore,
+                score
+            );
+        }
+
+        overallScore += score;
+    });
+
+    document.getElementById("highScoreLevel1").textContent =
+        levelScores[1];
+
+    document.getElementById("highScoreLevel2").textContent =
+        levelScores[2];
+
+    document.getElementById("highScoreLevel3").textContent =
+        levelScores[3];
+
+    document.getElementById("highScoreLevel4").textContent =
+        levelScores[4];
+
+    document.getElementById("highScoreLevel5").textContent =
+        levelScores[5];
+
+    document.getElementById("highScoreInfinite").textContent =
+        infiniteScore;
+
+    document.getElementById("highScoreOverall").textContent =
+        overallScore;
 }

@@ -1,4 +1,11 @@
 import {
+    playSound,
+    startBackgroundMusic,
+    stopBackgroundMusic,
+    stopAllSounds
+} from "./audio.js";
+
+import {
     loadHighScores,
     saveLevelScore,
     saveOverallScore,
@@ -44,6 +51,7 @@ import {
     createXPGem,
     updateXPGems,
     checkLevelUp,
+    resetLevelUpState,
     drawXPGems,
     isPlayerHit
 } from "./gameplay.js";
@@ -52,6 +60,7 @@ import {
 import {
     updateHUD,
     updateHighScoreDisplay,
+    updateDatabaseScoreDisplay,
     showUpgradeScreen,
     showGameOver,
     showLevelComplete,
@@ -90,12 +99,56 @@ const GAME_HEIGHT =
 // ------------------------------------
 // SCREENS
 // ------------------------------------
+async function checkLoginStatus() {
 
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:3000/auth/status",
+                {
+                    credentials: "include"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (data.authenticated) {
+
+            startScreen.classList.add(
+                "hidden"
+            );
+
+            loginScreen.classList.add(
+                "hidden"
+            );
+
+            mainMenuScreen.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Could not check login status:",
+            error
+        );
+
+    }
+
+}
 const startScreen =
     document.getElementById(
         "startScreen"
     );
 
+const loginScreen =
+    document.getElementById(
+        "loginScreen"
+    );
 
 const mainMenuScreen =
     document.getElementById(
@@ -166,6 +219,10 @@ const startButton =
         "startButton"
     );
 
+const googleLoginButton =
+    document.getElementById(
+        "googleLoginButton"
+    );    
 
 const playButton =
     document.getElementById(
@@ -304,15 +361,65 @@ window.addEventListener(
 
 startButton.addEventListener(
     "click",
+    async function() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:3000/auth/status",
+                    {
+                        credentials: "include"
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            startScreen.classList.add(
+                "hidden"
+            );
+
+            if (data.authenticated) {
+
+                mainMenuScreen.classList.remove(
+                    "hidden"
+                );
+
+            } else {
+
+                loginScreen.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Could not check login status:",
+                error
+            );
+
+            startScreen.classList.add(
+                "hidden"
+            );
+
+            loginScreen.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    }
+);
+
+googleLoginButton.addEventListener(
+    "click",
     function() {
 
-        startScreen.classList.add(
-            "hidden"
-        );
-
-        mainMenuScreen.classList.remove(
-            "hidden"
-        );
+        window.location.href =
+            "http://localhost:3000/auth/google";
 
     }
 );
@@ -340,20 +447,34 @@ playButton.addEventListener(
 
 highScoresButton.addEventListener(
     "click",
-    function() {
+    async function() {
 
-        updateHighScoreDisplay(
-            highScores
-        );
+        const databaseScores = await loadDatabaseScores();
 
-        mainMenuScreen.classList.add(
-            "hidden"
-        );
+        if (databaseScores) {
 
-        highScoresScreen.classList.remove(
-            "hidden"
-        );
+            console.log(
+                "Using database scores:",
+                databaseScores
+            );
 
+            updateDatabaseScoreDisplay(
+                databaseScores
+            );
+
+        } else {
+
+            console.log(
+                "Using local high scores."
+            );
+
+            updateHighScoreDisplay(
+                highScores
+            );
+        }
+
+        mainMenuScreen.classList.add("hidden");
+        highScoresScreen.classList.remove("hidden");
     }
 );
 
@@ -426,6 +547,50 @@ gameModeBackButton.addEventListener(
 
     }
 );
+
+// ------------------------------------
+// LOAD SCORES FROM DATABASE
+// ------------------------------------
+
+async function loadDatabaseScores() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:3000/api/scores",
+            {
+                method: "GET",
+                credentials: "include"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Could not load database scores"
+            );
+        }
+
+        const databaseScores =
+            await response.json();
+
+        console.log(
+            "Scores loaded from database:",
+            databaseScores
+        );
+
+        return databaseScores;
+
+    } catch (error) {
+
+        console.error(
+            "Error loading database scores:",
+            error
+        );
+
+        return null;
+    }
+}
+
 
 
 // ------------------------------------
@@ -551,6 +716,7 @@ window.addEventListener(
             } else {
 
                 gamePaused = true;
+                stopAllSounds();
 
                 showPauseScreen();
 
@@ -609,6 +775,56 @@ victoryMainMenuButton.addEventListener(
     }
 );
 
+// ------------------------------------
+// SAVE SCORE TO DATABASE
+// ------------------------------------
+
+async function saveScoreToDatabase(
+    scoreValue,
+    levelValue,
+    killsValue,
+    survivalTimeValue
+) {
+    try {
+        const response = await fetch(
+            "http://localhost:3000/api/scores",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    score: Math.round(scoreValue),
+                    level: levelValue,
+                    kills: Math.round(killsValue),
+                    survivalTime: Math.round(survivalTimeValue)
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(
+                "Failed to save score:",
+                data
+            );
+            return;
+        }
+
+        console.log(
+            "Game score saved to database:",
+            data
+        );
+
+    } catch (error) {
+        console.error(
+            "Error saving score:",
+            error
+        );
+    }
+}
 
 // ------------------------------------
 // START NEW RUN
@@ -642,6 +858,8 @@ function startNewRun() {
 // ------------------------------------
 
 function startGame() {
+
+    startBackgroundMusic();
 
     resetPlayer(
         GAME_WIDTH,
@@ -762,6 +980,15 @@ function startGame() {
 function completeLevel() {
 
     gamePaused = true;
+
+        saveScoreToDatabase(
+        score,
+        currentLevel,
+        kills,
+        survivalTime
+    );
+
+    playSound("levelComplete");
 
 
     saveLevelScore(
@@ -887,6 +1114,8 @@ function handleEnemyKilled(
         enemy
     );
 
+    playSound("enemyDeath");
+
 
     kills++;
 
@@ -905,6 +1134,15 @@ function endGame() {
     gameRunning = false;
 
     gamePaused = false;
+
+    saveScoreToDatabase(
+    score,
+    gameMode === "infinite" ? 0 : currentLevel,
+    kills,
+    survivalTime
+);
+
+    playSound("gameOver");
 
 
     if (
@@ -1128,25 +1366,33 @@ function update(dt) {
     // LEVEL UP
     // ------------------------------------
 
-    checkLevelUp(
-        function() {
+console.log("CHECKING LEVEL UP - PAUSED:", gamePaused);
 
-            gamePaused = true;
+checkLevelUp(
+    function() {
+
+        console.log("LEVEL UP CALLBACK - gamePaused:", gamePaused);
 
 
-            showUpgradeScreen(
-                function() {
+        playSound("levelUp");
 
-                    gamePaused = false;
+        gamePaused = true;
 
-                    lastTime =
-                        performance.now();
+        showUpgradeScreen(
+            function() {
 
-                }
-            );
+                resetLevelUpState();
 
-        }
-    );
+                gamePaused = false;
+
+                lastTime =
+                    performance.now();
+
+            }
+        );
+
+    }
+);
 
 
     // ------------------------------------
@@ -1403,3 +1649,5 @@ function drawPlayer() {
     ctx.stroke();
 
 }
+
+checkLoginStatus();
