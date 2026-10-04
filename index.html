@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Nightfall Survivors</title>
+
+<link
+    rel="stylesheet"
+    href="css/style.css"
+>
+
+</head>
+
+<body>
+
+<div id="gameContainer">
+
+
+<!-- ====================================================== -->
+<!-- CANVAS -->
+<!-- ====================================================== -->
+
+<canvas
+    id="gameCanvas"
+    width="960"
+    height="540"
+></canvas>
+
+
+<!-- ====================================================== -->
+<!-- START SCREEN -->
+<!-- ====================================================== -->
+
+<div
+    id="startScreen"
+    class="screen"
+>
+
+    <h1>Nightfall Survivors</h1>
+
+    <p>
+        Survive the night.
+        Defeat the undead.
+        Become stronger.
+    </p>
+
+    <button id="startButton">
+        ENTER
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- MAIN MENU -->
+<!-- ====================================================== -->
+
+<div
+    id="mainMenuScreen"
+    class="screen hidden"
+>
+
+    <h1>Nightfall Survivors</h1>
+
+    <h2>MAIN MENU</h2>
+
+    <p>
+        Survive the night.
+        Defeat the undead.
+    </p>
+
+    <button id="playButton">
+        PLAY
+    </button>
+
+    <button id="highScoresButton">
+        HIGH SCORES
+    </button>
+
+    <button id="aboutButton">
+        ABOUT
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- GAME MODE SELECTION -->
+<!-- ====================================================== -->
+
+<div
+    id="gameModeScreen"
+    class="screen hidden"
+>
+
+    <h2>SELECT GAME MODE</h2>
+
+    <p>
+        Choose how you want to survive the night.
+    </p>
+
+    <button id="campaignModeButton">
+        CAMPAIGN MODE
+    </button>
+
+    <p>
+        Survive all 5 levels.
+    </p>
+
+    <button id="infiniteModeButton">
+        INFINITE MODE
+    </button>
+
+    <p>
+        Endless survival.
+        Difficulty increases every 60 seconds.
+    </p>
+
+    <button id="gameModeBackButton">
+        BACK
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- HIGH SCORES -->
+<!-- ====================================================== -->
+
+<div
+    id="highScoresScreen"
+    class="screen hidden"
+>
+
+    <h2>HIGH SCORES</h2>
+
+    <p>
+        Level 1:
+        <span id="highScoreLevel1">0</span>
+    </p>
+
+    <p>
+        Level 2:
+        <span id="highScoreLevel2">0</span>
+    </p>
+
+    <p>
+        Level 3:
+        <span id="highScoreLevel3">0</span>
+    </p>
+
+    <p>
+        Level 4:
+        <span id="highScoreLevel4">0</span>
+    </p>
+
+    <p>
+        Level 5:
+        <span id="highScoreLevel5">0</span>
+    </p>
+
+    <p>
+        Infinite Mode:
+        <span id="highScoreInfinite">0</span>
+    </p>
+
+    <p>
+        Overall:
+        <span id="highScoreOverall">0</span>
+    </p>
+
+    <button id="highScoresBackButton">
+        BACK
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- ABOUT -->
+<!-- ====================================================== -->
+
+<div
+    id="aboutScreen"
+    class="screen hidden"
+>
+
+    <h2>ABOUT</h2>
+
+    <p>
+        Nightfall Survivors is a fixed-screen
+        survival game where you fight waves
+        of supernatural enemies.
+    </p>
+
+    <p>
+        Move with WASD or the Arrow Keys.
+    </p>
+
+    <p>
+        Your character attacks automatically.
+        Defeat enemies, collect XP and choose upgrades.
+    </p>
+
+    <p>
+        Survive all 5 levels to complete the campaign,
+        or test your limits in Infinite Mode.
+    </p>
+
+    <p>
+        Built with HTML5 Canvas, CSS and JavaScript.
+    </p>
+
+    <button id="aboutBackButton">
+        BACK
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- PAUSE SCREEN -->
+<!-- ====================================================== -->
+
+<div
+    id="pauseScreen"
+    class="screen hidden"
+>
+
+    <h2>PAUSED</h2>
+
+    <p>
+        The game is currently paused.
+    </p>
+
+    <button id="resumeButton">
+        RESUME
+    </button>
+
+    <button id="pauseMainMenuButton">
+        MAIN MENU
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- GAME OVER -->
+<!-- ====================================================== -->
+
+<div
+    id="gameOverScreen"
+    class="screen hidden"
+>
+
+    <h2>GAME OVER</h2>
+
+    <p id="gameOverStats">
+        You survived the night.
+    </p>
+
+    <button id="playAgainButton">
+        PLAY AGAIN
+    </button>
+
+    <button id="gameOverMainMenuButton">
+        MAIN MENU
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- LEVEL COMPLETE -->
+<!-- ====================================================== -->
+
+<div
+    id="levelCompleteScreen"
+    class="screen hidden"
+>
+
+    <h2>LEVEL COMPLETE!</h2>
+
+    <p id="levelCompleteText">
+        You survived the level.
+    </p>
+
+    <button id="nextLevelButton">
+        NEXT LEVEL
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- VICTORY SCREEN -->
+<!-- ====================================================== -->
+
+<div
+    id="victoryScreen"
+    class="screen hidden"
+>
+
+    <h1>NIGHTFALL SURVIVED</h1>
+
+    <h2>VICTORY!</h2>
+
+    <p id="victoryStats">
+        You survived all five levels.
+    </p>
+
+    <button id="victoryPlayAgainButton">
+        PLAY AGAIN
+    </button>
+
+    <button id="victoryMainMenuButton">
+        MAIN MENU
+    </button>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- HUD -->
+<!-- ====================================================== -->
+
+<div
+    id="hud"
+    class="hidden"
+>
+
+    <div id="topHud">
+
+        <div id="leftHud">
+
+            <div>
+                Level:
+                <span id="levelText">1</span>
+            </div>
+
+            <div>
+                <span id="levelName">
+                    Graveyard
+                </span>
+            </div>
+
+            <div>
+                HP:
+                <span id="hpText">
+                    100 / 100
+                </span>
+            </div>
+
+            <div>
+                XP:
+                <span id="xpText">
+                    0 / 10
+                </span>
+            </div>
+
+        </div>
+
+
+        <div id="rightHud">
+
+            <div>
+                Time:
+                <span id="timeText">
+                    0
+                </span>
+            </div>
+
+            <div>
+                Kills:
+                <span id="killsText">
+                    0
+                </span>
+            </div>
+
+            <div>
+                Score:
+                <span id="scoreText">
+                    0
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- XP BAR -->
+<!-- ====================================================== -->
+
+<div
+    id="xpBarContainer"
+    class="hidden"
+>
+
+    <div id="xpBar"></div>
+
+</div>
+
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ====================================================== -->
+
+<script
+    type="module"
+    src="js/main.js"
+></script>
+
+</body>
+
+</html>
